@@ -1,10 +1,10 @@
 <?php
 include_once('risolvi.php');
 
-$servername = "";
-$username = "";
+$servername = "localhost";
+$username = "niente01";
 $password = "";
-$database = "";
+$database = "my_niente01";
 
 $conn = new mysqli($servername, $username, $password, $database);
 
@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 }
 echo "Connected successfully";
 
-$botToken = '';
+$botToken = '5547316699:AAG45Y5_YIMg7uFBtKnWnLbf-I5mN_vHKkg';
 $website = 'https://api.telegram.org/bot'.$botToken;
 
 $update = file_get_contents('php://input');
