@@ -30,7 +30,7 @@ $photo = $update['message']['photo']['file_unique_id'];
 
 if (strstr($text, "/start")) {
     $sql = "INSERT INTO members (PersonID, LastName, FirstName, Username)
-	VALUES ('$chatId', '$name', '$secondname', '$photo')";
+	VALUES ('$chatId', '$name', '$secondname', '$username')";
 
 	if ($conn->query($sql) === TRUE) {
   		echo "New record created successfully";
@@ -40,8 +40,34 @@ if (strstr($text, "/start")) {
     $conn->close();
 	sendMessage($chatId,'Ciao '.$name.", benvenuto nel nuovo e aggioranitissimo <b> MESSAGGI INUTILI BOT 2.0 </b>");
 } else if (strstr($text, "/prenota")) {
-  $materia = str_replace('/prenota ', '', $text);
-	sendMessage($chatId, $username.' hai prenotato '.$materia);
+  $pieces = explode(" ", $text);
+  $materia = $pieces[1];
+  $giorno = $pieces[2];
+  $sql = "INSERT INTO prenota (PersonID, Username, Giorno, Materia)
+	VALUES ('$chatId', '$username', '$giorno', '$materia')";
+
+	if ($conn->query($sql) === TRUE) {
+  		echo "New record created successfully";
+	} else {
+  		echo "Error: " . $sql . "<br>" . $conn->error;
+	}
+    $conn->close();
+	sendMessage($chatId, $username.' hai prenotato <b>'.$materia.'</b> per il giorno <b>'.$giorno.'</b>');
+} else if (strstr($text, "/annullaprenotazione")) {
+  $sql = "DELETE FROM prenota WHERE PersonID='$chatId' ";
+
+	if ($conn->query($sql) === TRUE) {
+  		echo "New record created successfully";
+	} else {
+  		echo "Error: " . $sql . "<br>" . $conn->error;
+	}
+    $conn->close();
+	sendMessage($chatId, $username.' hai annualto tutte le tue prenotazioni');
+} else if (strstr($text, "/mieprenotazioni")) {
+	$query = mysqli_query($conn, "SELECT `PersonID`, `Username`, `Giorno`, `Materia` FROM `prenota` WHERE PersonID='$chatId'");
+    $rs = mysqli_fetch_row($query);
+
+	sendMessage($chatId, $username.' attualmente sei prenotato il giorno '. $rs[2].' a '.$rs[3]);
 };
 
 function sendMessage($chatId,$text)
@@ -51,4 +77,3 @@ function sendMessage($chatId,$text)
 };
 
 ?>
-
